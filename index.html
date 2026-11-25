@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Valoración del Encuentro – Taller de Evaluación Diagnóstica (Primaria EPJA)</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1d2433;--mu:#5d6679;--ac:#1f5fbf;--ac2:#e8f0fc;--bd:#d9deea;--ok:#1c8a5a;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161f;--card:#1b212d;--tx:#e8ecf5;--mu:#9aa5bb;--ac:#6ea3f5;--ac2:#22304a;--bd:#2c3547;--ok:#4cc78f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12161f;--card:#1b212d;--tx:#e8ecf5;--mu:#9aa5bb;--ac:#6ea3f5;--ac2:#22304a;--bd:#2c3547;--ok:#4cc78f;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45}
+main{max-width:820px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:.2em 0}h2{font-size:1.05rem;margin:0 0 10px;color:var(--ac)}
+.sub{color:var(--mu);margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin:12px 0}
+.tabs{display:flex;gap:8px;margin:10px 0}
+.tabs button,.btn{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 14px;border-radius:8px;cursor:pointer;font:inherit}
+.tabs button.on,.btn.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+.q{padding:10px 0;border-top:1px solid var(--bd)}.q:first-of-type{border-top:0}
+.q p{margin:0 0 6px}
+.sc{display:flex;gap:6px;flex-wrap:wrap}
+.sc label{border:1px solid var(--bd);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.9rem}
+.sc input{margin-right:4px}.sc label:has(input:checked){background:var(--ac2);border-color:var(--ac);font-weight:600}
+select,textarea{width:100%;font:inherit;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+textarea{min-height:64px;margin-bottom:8px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:560px){.row{grid-template-columns:1fr}}
+.leg{font-size:.85rem;color:var(--mu)}
+.msg{padding:10px;border-radius:8px;margin:10px 0}.err{background:#fbe5e5;color:#8a1f1f}.good{background:var(--ac2);color:var(--ok);font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--ac2);border-radius:10px;padding:12px;text-align:center}.kpi b{display:block;font-size:2rem;color:var(--ac)}
+.bar{display:grid;grid-template-columns:minmax(0,1fr) 140px 40px;gap:8px;align-items:center;margin:5px 0;font-size:.9rem}
+.bar i{display:block;height:12px;border-radius:6px;background:var(--ac)}.bar span.t{background:var(--ac2);border-radius:6px;display:block}
+.op{border-left:3px solid var(--ac);padding:4px 10px;margin:6px 0;background:var(--bg);border-radius:4px}
+body.proj main{max-width:1200px}body.proj .noproj{display:none!important}body.proj{font-size:1.2rem}body.proj .kpi b{font-size:3rem}
+</style>
+</head>
+<body>
+<main>
+<h1>Valoración del Encuentro</h1>
+<p class="sub">Taller de Evaluación Diagnóstica – Nivel Primario · Subsistema de Educación de Personas Jóvenes y Adultas (EPJA)</p>
+<div class="tabs noproj"><button id="tF" class="on">Valoración</button><button id="tR" hidden>Resultados</button></div>
+
+<section id="vF">
+<form id="f" onsubmit="return false"></form>
+<div id="m"></div>
+</section>
+
+<section id="vR" hidden>
+<div class="noproj" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p" id="bP">Proyectar</button><button class="btn" id="bC">Descargar CSV</button></div>
+<div id="res"></div>
+</section>
+</main>
+<script>
+const SC=[[4,"Excelente"],[3,"Muy bueno"],[2,"Regular"],[1,"Deficiente"]];
+const D=[
+["I. Organización y logística",["La convocatoria se comunicó con claridad y a tiempo.","El espacio y los recursos del taller fueron adecuados."]],
+["II. Desempeño de los facilitadores",["Demostraron dominio de los contenidos presentados.","Promovieron la participación activa de los asistentes."]],
+["III. Contenidos y metodología",["Los contenidos sobre la evaluación diagnóstica son pertinentes para el nivel primario de adultos.","Comprendí cómo aplicar los instrumentos de evaluación diagnóstica.","Las actividades prácticas fortalecieron mi aprendizaje."]],
+["IV. Aplicabilidad e impacto",["Lo aprendido es aplicable en mi centro o distrito.","Me siento preparado(a) para aplicar la evaluación diagnóstica con mis participantes."]]];
+const OP=["¿Cuál fue el aspecto más valioso del taller?","¿Qué aspectos considera que deben mejorarse?"];
+const GL=["Excelente","Muy bueno","Regular","Deficiente"];
+const ROLES=["Director(a)","Docente","Técnico(a) distrital","Técnico(a) regional","Otro"];
+const REG=["Regional 15 – Santo Domingo","Regional 04 – San Cristóbal","Otra"];
+const $=s=>document.querySelector(s);
+const el=(t,a={},tx)=>{const e=document.createElement(t);for(const k in a)e.setAttribute(k,a[k]);if(tx!=null)e.textContent=tx;return e};
+const f=$("#f");let n=0;
+const dc=el("div",{class:"card"});dc.append(el("h2",{},"Datos generales"));
+const row=el("div",{class:"row"});
+const mk=(id,lab,opts)=>{const w=el("div");w.append(el("label",{for:id},lab));const s=el("select",{id});s.append(el("option",{value:""},"Seleccione…"));opts.forEach(o=>s.append(el("option",{value:o},o)));w.append(s);return w};
+row.append(mk("rol","Rol del participante",ROLES),mk("reg","Regional",REG));dc.append(row);
+dc.append(el("p",{class:"leg"},"La valoración es anónima. Escala: 4 = Excelente · 3 = Muy bueno · 2 = Regular · 1 = Deficiente."));f.append(dc);
+D.forEach(([t,its])=>{const c=el("div",{class:"card"});c.append(el("h2",{},t));
+its.forEach(x=>{const i=n++;const q=el("div",{class:"q"});q.append(el("p",{},(i+1)+". "+x));const s=el("div",{class:"sc"});
+SC.forEach(([v,l])=>{const lb=el("label");const r=el("input",{type:"radio",name:"q"+i,value:v});lb.append(r,document.createTextNode(v+" · "+l));s.append(lb)});q.append(s);c.append(q)});f.append(c)});
+const gc=el("div",{class:"card"});gc.append(el("h2",{},"V. Valoración global"),el("p",{},"En general, mi valoración del encuentro es:"));
+const gs=el("div",{class:"sc"});GL.forEach(l=>{const lb=el("label");lb.append(el("input",{type:"radio",name:"g",value:l}),document.createTextNode(l));gs.append(lb)});gc.append(gs);f.append(gc);
+const oc=el("div",{class:"card"});oc.append(el("h2",{},"VI. Preguntas abiertas"));
+OP.forEach((p,i)=>{oc.append(el("label",{for:"o"+i},(i+1)+". "+p),el("textarea",{id:"o"+i}))});f.append(oc);
+const sb=el("button",{class:"btn p",type:"button"},"Enviar valoración");f.append(sb);
+let db=null,canE=false,uid=null,rows=[];
+const msg=(t,c)=>{const m=$("#m");m.textContent="";if(t){const d=el("div",{class:"msg "+c},t);m.append(d)}};
+try{if(localStorage.getItem("val_enviada")==="1"){f.hidden=true;msg("Gracias, su valoración ya fue enviada desde este dispositivo.","good")}}catch(e){}
+sb.onclick=async()=>{
+ const r=[];for(let i=0;i<n;i++){const c=f.querySelector('input[name=q'+i+']:checked');if(!c){msg("Falta responder el criterio "+(i+1)+".","err");return}r.push(+c.value)}
+ const g=f.querySelector('input[name=g]:checked');if(!g){msg("Seleccione la valoración global.","err");return}
+ if(!db||!uid){msg("No se pudo guardar: abra el enlace con su cuenta de Claude e inténtelo de nuevo.","err");return}
+ sb.disabled=true;
+ try{await db.doc("respuestas/"+uid).set({r,g:g.value,rol:$("#rol").value,reg:$("#reg").value,o:OP.map((_,i)=>$("#o"+i).value.trim()),ts:Date.now()});
+  try{localStorage.setItem("val_enviada","1")}catch(e){}
+  f.hidden=true;msg("¡Gracias por su participación y por su compromiso con la educación de personas jóvenes y adultas!","good")}
+ catch(e){sb.disabled=false;msg("No se pudo guardar su valoración. Es posible que necesite permiso para participar; avise al facilitador.","err")}
+};
+const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+function render(){
+ const R=$("#res");R.textContent="";const N=rows.length;
+ const k=el("div",{class:"kpis card"});const kp=(v,l)=>{const d=el("div",{class:"kpi"});d.append(el("b",{},v),document.createTextNode(l));k.append(d)};
+ const all=rows.flatMap(x=>x.r||[]);kp(String(N),"Respuestas");kp(N?avg(all).toFixed(2)+" / 4":"–","Promedio general");
+ const gm={};rows.forEach(x=>gm[x.g]=(gm[x.g]||0)+1);const top=Object.entries(gm).sort((a,b)=>b[1]-a[1])[0];kp(top?top[0]:"–","Valoración global más frecuente");R.append(k);
+ const bar=(c,l,v)=>{const b=el("div",{class:"bar"});b.append(el("span",{},l));const t=el("span",{class:"t"});const i=el("i");i.style.width=(v/4*100)+"%";t.append(i);b.append(t,el("b",{},N?v.toFixed(2):"–"));c.append(b)};
+ let i0=0;D.forEach(([t,its])=>{const c=el("div",{class:"card"});const idx=its.map((_,j)=>i0+j);
+  c.append(el("h2",{},t+" · promedio "+(N?avg(idx.flatMap(i=>rows.map(x=>x.r[i]).filter(Boolean))).toFixed(2):"–")));
+  its.forEach((x,j)=>bar(c,(i0+j+1)+". "+x,avg(rows.map(y=>y.r[i0+j]).filter(Boolean))));i0+=its.length;R.append(c)});
+ const gc=el("div",{class:"card"});gc.append(el("h2",{},"Valoración global"));
+ GL.forEach(l=>{const b=el("div",{class:"bar"});b.append(el("span",{},l));const t=el("span",{class:"t"});const i=el("i");i.style.width=(N?(gm[l]||0)/N*100:0)+"%";t.append(i);b.append(t,el("b",{},String(gm[l]||0)));gc.append(b)});R.append(gc);
+ const oc=el("div",{class:"card"});oc.append(el("h2",{},"Respuestas abiertas"));
+ OP.forEach((p,i)=>{oc.append(el("p",{},el("b",{},p).textContent));rows.map(x=>(x.o||[])[i]).filter(Boolean).forEach(t=>oc.append(el("div",{class:"op"},t)))});R.append(oc);
+}
+function show(w){$("#vF").hidden=w!=="F";$("#vR").hidden=w!=="R";$("#tF").classList.toggle("on",w==="F");$("#tR").classList.toggle("on",w==="R")}
+$("#tF").onclick=()=>show("F");$("#tR").onclick=()=>show("R");
+$("#bP").onclick=()=>{document.body.classList.toggle("proj");if(document.body.classList.contains("proj")){try{document.documentElement.requestFullscreen()}catch(e){}}else{try{document.exitFullscreen()}catch(e){}}};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")document.body.classList.remove("proj")});
+document.addEventListener("fullscreenchange",()=>{if(!document.fullscreenElement)document.body.classList.remove("proj")});
+$("#bC").onclick=async()=>{
+ const q=s=>'"'+String(s==null?"":s).replace(/"/g,'""')+'"';
+ const h=["Fecha","Rol","Regional",...D.flatMap(([,a])=>a).map((_,i)=>"C"+(i+1)),"Global",...OP.map((_,i)=>"Abierta"+(i+1))];
+ const L=[h.map(q).join(",")].concat(rows.map(x=>[new Date(x.ts).toLocaleString("es-DO"),x.rol,x.reg,...(x.r||[]),x.g,...(x.o||[])].map(q).join(",")));
+ try{const d=await claude.use("downloads");if(d)await d.save({filename:"valoracion-encuentro.csv",data:"\ufeff"+L.join("\n")})}catch(e){}
+};
+(async()=>{
+ try{db=await claude.use("db")}catch(e){}
+ try{const u=await claude.use("user");if(u){canE=await u.canEdit();uid=await u.id()}}catch(e){}
+ if(db&&canE){$("#tR").hidden=false;
+  db.collection("respuestas").onSnapshot(s=>{rows=s.docs.map(d=>d.data()).sort((a,b)=>a.ts-b.ts);render()},()=>{});show("R")}
+})();
+</script>
+</body>
+</html>
